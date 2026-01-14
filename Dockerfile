@@ -1,22 +1,57 @@
-#!/bin/bash
-FROM --platform=linux/amd64 node:lts-alpine as builder
-WORKDIR /app
-#Installing pnpm as default paackage manager
-RUN npm i -g pnpm
-COPY package.json pnpm-lock.yaml ./
-COPY . .
-RUN pnpm install --frozen-lockfile
-COPY . .
-RUN pnpm install vite-plugin-svelte-inspector
-RUN pnpm run build
+# =============================================
+# Build Stage
+# =============================================
+FROM node:18-alpine AS builder
 
-FROM --platform=linux/amd64 node:lts-alpine
-USER node:node
 WORKDIR /app
-COPY --from=builder --chown=node:node /app/build ./build
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --chown=node:node package.json .
-# Copy over rest of the project files
+
+# Copy package files first for better caching
+COPY package*.json ./
+
+# Install all dependencies (including devDependencies for build)
+RUN npm ci --include=dev
+
+# Copy source code
 COPY . .
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Build SvelteKit app
+RUN npm run build
+
+# Prune dev dependencies after build
+RUN npm prune --production
+
+# =============================================
+# Production Stage
+# =============================================
+FROM node:18-alpine AS production
+
+# Add non-root user for security
+RUN addgroup -g 1001 -S nodejs && adduser -S sveltekit -u 1001
+
+WORKDIR /app
+
+# Copy production build
+COPY --from=builder --chown=sveltekit:nodejs /app/build ./build
+COPY --from=builder --chown=sveltekit:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=sveltekit:nodejs /app/package.json ./package.json
+COPY --from=builder --chown=sveltekit:nodejs /app/prisma ./prisma
+
+# Environment variables
+ENV NODE_ENV=production
+ENV PORT=3000
+
+# Switch to non-root user
+USER sveltekit
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD node -e "require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
+
+# Open port
 EXPOSE 3000
-CMD ["node","build"]
+
+# Start the application
+CMD ["node", "build"]
