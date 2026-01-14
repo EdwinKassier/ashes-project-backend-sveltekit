@@ -35,7 +35,7 @@ export const GET: RequestHandler = async ({ url }) => {
 			result: analysisResult,
 			graph_data: graphData
 		});
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.error('API Error:', err);
 
 		// Handle Domain Errors
@@ -54,9 +54,13 @@ export const GET: RequestHandler = async ({ url }) => {
 		}
 
 		// Fallback for unexpected errors
-		return json({
-			error: 'Internal server error',
-			message: process.env.NODE_ENV === 'development' ? err.message : undefined
-		}, { status: 500 });
+		const errorMessage = err instanceof Error ? err.message : 'Unknown error';
+		return json(
+			{
+				error: 'Internal server error',
+				message: process.env.NODE_ENV === 'development' ? errorMessage : undefined
+			},
+			{ status: 500 }
+		);
 	}
 };

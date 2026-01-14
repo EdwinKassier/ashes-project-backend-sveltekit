@@ -9,14 +9,14 @@ export default defineConfig({
 	reporter: 'list',
 	use: {
 		baseURL: 'http://localhost:5173',
-		trace: 'on-first-retry',
+		trace: 'on-first-retry'
 	},
 
 	projects: [
 		{
 			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] },
-		},
+			use: { ...devices['Desktop Chrome'] }
+		}
 	],
 
 	webServer: {
@@ -24,6 +24,6 @@ export default defineConfig({
 		url: 'http://localhost:5173',
 		reuseExistingServer: !process.env.CI,
 		stdout: 'pipe',
-		stderr: 'pipe',
-	},
+		stderr: 'pipe'
+	}
 });

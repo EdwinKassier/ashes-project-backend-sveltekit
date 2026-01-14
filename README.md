@@ -162,11 +162,11 @@ We use a pyramid testing strategy.
 
 We utilize a rigorous GitHub Actions pipeline ([pipeline.yml](.github/workflows/pipeline.yml)) for continuous integration and delivery.
 
--   **Code Quality**: TypeScript type checking, ESLint linting, and Prettier format verification.
--   **Test Suite**: Unit & integration tests via Vitest with coverage reporting (Codecov compatible).
--   **Security Scan**: Automated `npm audit` on every push.
--   **Docker Build**: Container build verification with integrated health checks.
--   **Production Deploy**: Automated deployment to **Google Cloud Run** triggered by `prod/v*` tags, including automatic GitHub Release generation.
+- **Code Quality**: TypeScript type checking, ESLint linting, and Prettier format verification.
+- **Test Suite**: Unit & integration tests via Vitest with coverage reporting (Codecov compatible).
+- **Security Scan**: Automated `npm audit` on every push.
+- **Docker Build**: Container build verification with integrated health checks.
+- **Production Deploy**: Automated deployment to **Google Cloud Run** triggered by `prod/v*` tags, including automatic GitHub Release generation.
 
 ---
 
@@ -174,10 +174,10 @@ We utilize a rigorous GitHub Actions pipeline ([pipeline.yml](.github/workflows/
 
 ### Monitoring Endpoints
 
-| **Endpoint** | **Purpose** | **Response** |
-|:---|:---|:---|
-| `/health` | Basic application health | Status: UP, Uptime, Version |
-| `/ready` | Readiness check (DB) | Status: READY, DB Connection |
+| **Endpoint** | **Purpose**              | **Response**                 |
+| :----------- | :----------------------- | :--------------------------- |
+| `/health`    | Basic application health | Status: UP, Uptime, Version  |
+| `/ready`     | Readiness check (DB)     | Status: READY, DB Connection |
 
 ### `GET /api/process_request`
 

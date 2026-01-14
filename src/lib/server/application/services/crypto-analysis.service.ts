@@ -47,7 +47,9 @@ export class CryptoAnalysisService {
 
 			averageStartPrice = this.calculateAverage(startData);
 			if (averageStartPrice === 0) {
-				throw new ValidationError('Could not calculate a valid starting price from historical data');
+				throw new ValidationError(
+					'Could not calculate a valid starting price from historical data'
+				);
 			}
 
 			await this.openingRepo.create({ symbol, average: averageStartPrice });

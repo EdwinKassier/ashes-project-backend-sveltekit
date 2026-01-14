@@ -28,17 +28,21 @@ vi.mock('../../infrastructure/api/kraken.client', () => ({
 	}
 }));
 
-import { KrakenClient } from '../../infrastructure/api/kraken.client';
+interface MockKrakenClient {
+	fetchOHLC: ReturnType<typeof vi.fn>;
+	checkSymbolExists: ReturnType<typeof vi.fn>;
+	extractDataPoints: ReturnType<typeof vi.fn>;
+}
 
 describe('CryptoAnalysisService', () => {
 	let service: CryptoAnalysisService;
-	let mockKraken: any;
+	let mockKraken: MockKrakenClient;
 
 	beforeEach(() => {
 		vi.clearAllMocks();
 		service = new CryptoAnalysisService();
-		// Access the mocked instance (this is a bit hacky in vitest but works with class mocks)
-		mockKraken = (service as any).krakenClient;
+		// Access the mocked instance
+		mockKraken = (service as unknown as { krakenClient: MockKrakenClient }).krakenClient;
 	});
 
 	it('should throw ResourceNotFoundError if symbol does not exist', async () => {
@@ -50,14 +54,14 @@ describe('CryptoAnalysisService', () => {
 	it('should return analysis result for valid symbol', async () => {
 		mockKraken.checkSymbolExists.mockResolvedValue(true);
 
-		const mockOhlcData = { result: { 'BTCUSD': [] } };
+		const mockOhlcData = { result: { BTCUSD: [] } };
 		mockKraken.fetchOHLC.mockResolvedValue(mockOhlcData);
 
 		const mockDataPoints = [
 			[1609459200, '29000', '29500', '28500', '29200', '29100', '100', 50],
 			[1609545600, '29200', '29800', '29000', '29500', '29300', '120', 60],
 			[1609632000, '29500', '30000', '29200', '29800', '29500', '110', 55],
-			[1609718400, '29800', '30200', '29500', '30000', '29700', '130', 65],
+			[1609718400, '29800', '30200', '29500', '30000', '29700', '130', 65]
 		];
 		mockKraken.extractDataPoints.mockReturnValue(mockDataPoints);
 
