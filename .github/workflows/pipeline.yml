@@ -148,7 +148,7 @@ jobs:
 
       - name: Verify tag deployment
         run: |
-          echo "🚀 Starting production deployment for tag: ${{ github.ref }}"
+          echo "Starting production deployment for tag: ${{ github.ref }}"
           echo "Tag name: ${GITHUB_REF#refs/tags/}"
           echo "This deployment is triggered by tag creation only"
 
@@ -251,9 +251,9 @@ jobs:
 
           echo "Final health check..."
           if curl -f "$SERVICE_URL/health"; then
-            echo "✅ Deployment verified successfully"
+            echo "Deployment verified successfully"
           else
-            echo "❌ Health check failed, but deployment may still be working"
+            echo "Health check failed, but deployment may still be working"
             echo "Service URL: $SERVICE_URL"
             echo "Please check the service manually"
           fi
@@ -277,11 +277,11 @@ jobs:
             - **Environment**: Production
 
             ### Quality Checks Passed
-            - ✅ TypeScript type checking
-            - ✅ Code formatting (Prettier)
-            - ✅ Linting (ESLint)
-            - ✅ Security scan (npm audit)
-            - ✅ Unit tests
-            - ✅ SvelteKit build verification
+            - TypeScript type checking
+            - Code formatting (Prettier)
+            - Linting (ESLint)
+            - Security scan (npm audit)
+            - Unit tests
+            - SvelteKit build verification
           draft: false
           prerelease: false
